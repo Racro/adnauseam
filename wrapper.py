@@ -58,7 +58,7 @@ if __name__ == '__main__':
         display = vdisplay.display
         os.environ['DISPLAY'] = f':{display}'
 
-    urls = open('websites_1500.txt', 'r').read().splitlines()[:10]    
+    urls = open('websites_3000.txt', 'r').read().splitlines()
     # for i, item in enumerate(divide_chunks(urls, SIZE)):
     for i, item in enumerate(urls):
         # print(url)

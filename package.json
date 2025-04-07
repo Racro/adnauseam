@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "path": "^0.12.7",
+    "puppeteer": "^24.4.0",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2",
+    "xvfb": "^0.4.0"
+  }
+}
