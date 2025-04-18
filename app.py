@@ -7,8 +7,11 @@ app = Flask(__name__)
 
 # Create storage directory if it doesn't exist
 STORAGE_DIR = "ad_data"
+SS_DIR = "ss"
 if not os.path.exists(STORAGE_DIR):
     os.makedirs(STORAGE_DIR)
+if not os.path.exists(SS_DIR):
+    os.makedirs(SS_DIR)
 
 def get_next_index(page_url):
     """Get the next available index for a given page URL"""

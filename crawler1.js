@@ -50,7 +50,7 @@ async function autoScroll(page) {
 // Update these paths as needed
 const braveBinary = '../accads_crawler/chrome-linux/chrome';  // Path to your Brave browser binary
 // const braveBinary = '/usr/bin/chromium-browser';  // Path to your Brave browser binary
-const extensionPath = '/home/ritik/Downloads/adnauseam.chromium';  // Path to the AdNauseam extension directory
+const extensionPath = '../extensions/adnauseam_extn';  // Path to the AdNauseam extension directory
 // const userProfileDir = 'temp_dir';  // Path to the user profile directory
 
 let i = 0;

@@ -16,7 +16,7 @@ def main(urls):
     # URL = 'https://www.geeksforgeeks.org/deletion-in-linked-list/'
 
     script_name = 'crawler1.js'
-    # joined = '\n'.join(url_list)
+
     try:
         result = subprocess.run(
             ['node', script_name, json.dumps([urls])],
@@ -58,36 +58,60 @@ if __name__ == '__main__':
         display = vdisplay.display
         os.environ['DISPLAY'] = f':{display}'
 
-    urls = open('websites_3000.txt', 'r').read().splitlines()
+    urls = open('websites_1500.txt', 'r').read().splitlines()[:10]
     # for i, item in enumerate(divide_chunks(urls, SIZE)):
-    for i, item in enumerate(urls):
+    SIZE = 5
+    TIMEOUT = 120
+
+    for i, item in enumerate(divide_chunks(urls, SIZE)):
         # print(url)
         print(item)
-        
-        p = multiprocessing.Process(target=main, args=(item,))
-        print('starting: ', p)
-        p.start()
 
-        TIMEOUT = 120
+        try:
+            # Create a pool of worker processes
+            with multiprocessing.Pool(processes=SIZE) as pool:
+                # Map the worker function to the arguments
+                results = pool.map(main, item)  # Changed arguments to item since that's what's being iterated
+            
+            # Print the results
+            for i, (stdout, stderr) in enumerate(results):
+                print(f'Result from worker {i}:')
+                print('stdout:', stdout)
+                print('stderr:', stderr)
+        except multiprocessing.TimeoutError as e:
+            print(f"Pool timeout error: {e}")
+        except multiprocessing.ProcessError as e:
+            print(f"Process error: {e}") 
+        except Exception as e:
+            print(e)
+
+        # Check for Chrome processes every 10 seconds until timeout or all closed
         start = time.time()
-        p.join(timeout = 60)
-
-        while time.time() - start <= TIMEOUT:
-            if p.is_alive():
-                time.sleep(5)
-            else:
+        while time.time() - start < TIMEOUT:
+            try:
+                # Check for running chrome/chromium processes
+                chrome_count = int(subprocess.check_output(['pgrep', '-c', 'chrome']).decode().strip())
+                if chrome_count == 0:
+                    print("All Chrome processes have finished")
+                    break
+                print(f"Found {chrome_count} Chrome processes still running, waiting...")
+                time.sleep(10)
+            except subprocess.CalledProcessError:
+                # pgrep returns exit code 1 if no processes found
+                print("All Chrome processes have finished")
+                break
+            except Exception as e:
+                print(f"Error checking Chrome processes: {e}")
                 break
 
-        if p.is_alive():
-            print('timeout exceeded... terminating job')
-            p.terminate()
+        try:
+            os.system('pkill chrome')
+            os.system('pkill chromium')
+        except Exception as e:
+            print(f"Error killing Chrome processes: {e}")
         
         time.sleep(2)
         
-        # while os.path.exists('temp_dir'):
-        #     os.system(f'mv temp_dir temp_dir_new_{i}')
-        # while not os.path.exists('temp_dir'):
-        #     os.system('mkdir temp_dir')
     
     if args.headless:
         vdisplay.stop()
